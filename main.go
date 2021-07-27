@@ -73,7 +73,7 @@ func main() {
 
 	defer saveData()
 
-	if(len(data.SearchHistory) > 0) {
+	if len(data.SearchHistory) > 0 {
 		log.Println("Searching cache...")
 	}
 
@@ -88,25 +88,18 @@ func main() {
 				fmt.Println("Searching...")
 				continue
 			} else {
-				command := strings.Join(inputCommand, " ")
 
-				cmd := exec.Command("cmd", "/C", command)
-				cmd.Dir = history.Result
-				cmd.Stderr = os.Stdout
-				commandOutput, err := cmd.Output()
+				err := runCommand(history.Result, inputCommand)
+
 				if err != nil {
 					log.Println(err)
-					return
 				}
-				log.Println(fmt.Sprintf("Running '%s' on path: '%s'", command, history.Result))
-				log.Println(string(commandOutput))
 				return
 			}
 
 		}
 	}
 
-	//////
 	log.Println("Searching filesystem...")
 	err = filepath.Walk(currentWorkingDirectory,
 		func(path string, info os.FileInfo, err error) error {
@@ -136,18 +129,12 @@ func main() {
 					})
 
 				}
-
-				command := strings.Join(inputCommand, " ")
-
-				cmd := exec.Command("cmd", "/C", command)
-				cmd.Dir = path
-				cmd.Stderr = os.Stdout
-				commandOutput, err := cmd.Output()
+				
+				err = runCommand(path, inputCommand)
 				if err != nil {
 					return err
 				}
-				log.Println(fmt.Sprintf("Running '%s' on path: '%s'", command, path))
-				log.Println(string(commandOutput))
+
 				return io.EOF
 			}
 
@@ -181,6 +168,21 @@ func saveData() {
 	if err := f.Close(); err != nil {
 		log.Fatal(err)
 	}
+}
+
+func runCommand(path string, inputCommand []string) error {
+	command := strings.Join(inputCommand, " ")
+
+	cmd := exec.Command("cmd", "/C", command)
+	cmd.Dir = path
+	cmd.Stderr = os.Stdout
+	commandOutput, err := cmd.Output()
+	if err != nil {
+		return err
+	}
+	log.Println(fmt.Sprintf("Running '%s' on path: '%s'", command, path))
+	log.Println(string(commandOutput))
+	return nil
 }
 
 type AppData struct {
