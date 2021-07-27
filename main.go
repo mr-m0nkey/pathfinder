@@ -73,12 +73,51 @@ func main() {
 
 	defer saveData()
 
-	log.Println("Searching...")
+	if(len(data.SearchHistory) > 0) {
+		log.Println("Searching cache...")
+	}
 
+	for _, history := range data.SearchHistory {
+		if history.UserInput == inputDirectory {
+
+			log.Println("Directory found at '%s'. Enter 'Y' to use this directory or any other key to continue searching.", history.Result)
+
+			var userInput string
+			fmt.Scanln(&userInput)
+			if !strings.EqualFold(userInput, "Y") {
+				fmt.Println("Searching...")
+				continue
+			} else {
+				command := strings.Join(inputCommand, " ")
+
+				cmd := exec.Command("cmd", "/C", command)
+				cmd.Dir = history.Result
+				cmd.Stderr = os.Stdout
+				commandOutput, err := cmd.Output()
+				if err != nil {
+					log.Println(err)
+					return
+				}
+				log.Println(fmt.Sprintf("Running '%s' on path: '%s'", command, history.Result))
+				log.Println(string(commandOutput))
+				return
+			}
+
+		}
+	}
+
+	//////
+	log.Println("Searching filesystem...")
 	err = filepath.Walk(currentWorkingDirectory,
 		func(path string, info os.FileInfo, err error) error {
 			if err != nil {
 				log.Println(err)
+			}
+
+			for _, history := range data.SearchHistory {
+				if history.Result == path {
+					return nil
+				}
 			}
 
 			if info.Name() == inputDirectory {
@@ -93,13 +132,10 @@ func main() {
 				} else {
 					data.SearchHistory = append(data.SearchHistory, Search{
 						UserInput: inputDirectory,
-						Result: path,
+						Result:    path,
 					})
 
 				}
-
-
-
 
 				command := strings.Join(inputCommand, " ")
 
@@ -126,12 +162,12 @@ func main() {
 
 func saveData() {
 	f, err := os.OpenFile("data/db.json", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
-    if err != nil {
-        log.Fatal(err)
-    }
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	jsonBytes, err := json.Marshal(&data)
-	
+
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -142,9 +178,9 @@ func saveData() {
 		log.Fatal(err)
 	}
 
-    if err := f.Close(); err != nil {
-        log.Fatal(err)
-    }
+	if err := f.Close(); err != nil {
+		log.Fatal(err)
+	}
 }
 
 type AppData struct {
