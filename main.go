@@ -83,6 +83,24 @@ func main() {
 
 			if info.Name() == inputDirectory {
 
+				log.Println("Directory found at '%s'. Enter 'Y' to use this directory or any other key to continue searching.", path)
+
+				var userInput string
+				fmt.Scanln(&userInput)
+				if !strings.EqualFold(userInput, "Y") {
+					fmt.Println("Searching...")
+					return nil
+				} else {
+					data.SearchHistory = append(data.SearchHistory, Search{
+						UserInput: inputDirectory,
+						Result: path,
+					})
+
+				}
+
+
+
+
 				command := strings.Join(inputCommand, " ")
 
 				cmd := exec.Command("cmd", "/C", command)
@@ -106,8 +124,27 @@ func main() {
 
 }
 
-func saveData()  {
+func saveData() {
+	f, err := os.OpenFile("data/db.json", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
+    if err != nil {
+        log.Fatal(err)
+    }
+
+	jsonBytes, err := json.Marshal(&data)
 	
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	_, err = f.Write(jsonBytes)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+    if err := f.Close(); err != nil {
+        log.Fatal(err)
+    }
 }
 
 type AppData struct {
