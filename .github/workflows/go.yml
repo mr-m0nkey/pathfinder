@@ -24,7 +24,6 @@ jobs:
     - name: Test
       run: go test -v ./...
 
-
     - name: Build Docker image
       uses: docker/build-push-action@v2
       with:
