@@ -2,9 +2,8 @@ name: Release to Docker Hub
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+    tags:
+      - "*.*.*"
 
 jobs:
   release:
@@ -40,7 +39,6 @@ jobs:
             ${{ secrets.DOCKER_HUB_USERNAME }}/${{ github.event.repository.name }}
           # generate Docker tags based on the following events/attributes
           tags: |
-            type=ref,event=branch
             type=semver,pattern={{version}}
 
       - name: Build and push Docker image
