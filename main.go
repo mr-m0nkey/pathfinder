@@ -178,6 +178,7 @@ type AppData struct {
 	SearchHistory []Search `json:"searchHistory"`
 }
 
+
 type Search struct { 
 	UserInput string `json:"userInput"`
 	Result    string `json:"result"`
