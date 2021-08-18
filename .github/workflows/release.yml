@@ -49,8 +49,8 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: ${{ steps.tag_version.outputs.new_tag }}
           tag_with_ref: true
+          tags: ${{ steps.tag_version.outputs.new_tag }}
 
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
