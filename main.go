@@ -75,7 +75,7 @@ func main() {
 	for _, history := range data.SearchHistory {
 		if history.UserInput == inputDirectory {
 
-			log.Println("Directory found at '%s'. Enter 'Y' to use this directory or any other key to continue searching.", history.Result)
+			log.Printf("Directory found at '%s'. Enter 'Y' to use this directory or any other key to continue searching.\n", history.Result)
 
 			var userInput string
 			fmt.Scanln(&userInput)
@@ -110,7 +110,7 @@ func main() {
 
 			if info.Name() == inputDirectory {
 
-				log.Println("Directory found at '%s'. Enter 'Y' to use this directory or any other key to continue searching.", path)
+				log.Printf("Directory found at '%s'. Enter 'Y' to use this directory or any other key to continue searching.\n", path)
 
 				var userInput string
 				fmt.Scanln(&userInput)
