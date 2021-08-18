@@ -29,7 +29,6 @@ jobs:
         run:  go build -v ./...
 
       
-      - uses: actions/checkout@v2
       - name: Bump version and push tag
         id: tag_version
         uses: mathieudutour/github-tag-action@v5.6
