@@ -2,9 +2,9 @@ name: Go
 
 on:
   push:
-    branches: [ main ]
+    branches: [ review-dev ]
   pull_request:
-    branches: [ main ]
+    branches: [ review-dev ]
 
 jobs:
 
