@@ -2,8 +2,7 @@ name: Release to Docker Hub
 
 on:
   push:
-    tags:
-      - "*.*.*"
+    branches: [ main ]
 
 jobs:
   release:
