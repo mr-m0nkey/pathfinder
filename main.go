@@ -19,11 +19,6 @@ func init() {
 		data = AppData{
 			SearchHistory: []Search{},
 		}
-		jsonBytes, err := json.Marshal(&data)
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
 
 		err = os.Mkdir("data", 0755)
 
@@ -40,7 +35,7 @@ func init() {
 
 		defer f.Close()
 
-		_, err = f.Write(jsonBytes)
+		data.WriteToFile(f)
 
 		if err != nil {
 			log.Fatal(err)
@@ -153,13 +148,7 @@ func saveData() {
 		log.Fatal(err)
 	}
 
-	jsonBytes, err := json.Marshal(&data)
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	_, err = f.Write(jsonBytes)
+	data.WriteToFile(f)
 
 	if err != nil {
 		log.Fatal(err)
@@ -189,7 +178,17 @@ type AppData struct {
 	SearchHistory []Search `json:"searchHistory"`
 }
 
-type Search struct {
+type Search struct { 
 	UserInput string `json:"userInput"`
 	Result    string `json:"result"`
+}
+
+func (data AppData) WriteToFile(writer io.Writer) error {
+	jsonBytes, err := json.Marshal(&data)
+	if err != nil {
+		return err
+	}
+	
+	_, err = writer.Write(jsonBytes)
+	return err
 }
